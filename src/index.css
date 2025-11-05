@@ -1,13 +1,51 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --rv-primary: oklch(65% 0.18 260);
+  --rv-primary-700: oklch(58% 0.18 260);
+  --rv-primary-50: color-mix(in oklab, var(--rv-primary) 18%, transparent);
+  --rv-accent: oklch(78% 0.14 28);
+  --rv-accent-50: color-mix(in oklab, var(--rv-accent) 16%, transparent);
+  --rv-surface: oklch(20% 0.02 260);
+  --rv-elev-1: oklch(24% 0.02 260);
+  --rv-elev-2: oklch(28% 0.02 260);
+  --rv-text: oklch(96% 0.02 260);
+  --rv-text-muted: oklch(80% 0.01 250);
+  --rv-border: oklch(36% 0.01 260);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
 }
+html {
+  overflow-y: auto !important;
+}
+body, #root {
+  overflow: visible !important;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--rv-surface);
+  color: var(--rv-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-y: scroll; /* force single scrollbar on page */
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: inherit; }
+
+html { scroll-behavior: smooth; }
+
+/* Utility */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.center { display: grid; place-items: center; }
