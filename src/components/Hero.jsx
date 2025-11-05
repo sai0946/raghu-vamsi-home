@@ -1,13 +1,11 @@
 import React from 'react';
 import useRevealOnScroll from '../hooks/useRevealOnScroll';
 import useParallax from '../hooks/useParallax';
-import useSplitText from '../hooks/useSplitText';
 import heroVideo from '../assets/hero.mp4';
 
 export default function Hero() {
   const [ref, shown] = useRevealOnScroll();
   useParallax();
-  const splitRef = useSplitText();
   return (
     <section id="home" className="rv-section rv-hero">
       <div className="rv-hero-media">
@@ -18,8 +16,8 @@ export default function Hero() {
       </div>
       <div className="rv-container rv-hero-inner single">
         <div ref={ref} className={`reveal ${shown ? 'show' : ''}`} data-parallax="0.35">
+          <h1 className="rv-title" style={{ margin: '0 0 16px 0' }}>Raghuvamsi</h1>
           <div className="rv-eyebrow rv-hero-eyebrow">Creating value with precision.</div>
-          <h1 className="rv-title" ref={splitRef}>Raghuvamsi</h1>
           <p className="rv-subtitle rv-hero-subtitle">
             Raghu Vamsi Group has carved a space for itself in the Aerospace & Defense industry worldwide since 2004, delivering high precision engineering components and sub-assemblies to global corporations.
           </p>
