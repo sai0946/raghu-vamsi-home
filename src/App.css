@@ -81,6 +81,10 @@ main {
   perspective: 1000px;
 }
 
+.rv-card-wrapper {
+  grid-column: span 4;
+}
+
 .rv-card {
   grid-column: span 4;
   background: var(--rv-elev-1);
@@ -102,10 +106,12 @@ main {
 .rv-card[data-anim="right"]:hover { transform: translateY(-8px) translateX(-2px) rotateZ(0.3deg) perspective(600px) rotateX(1deg) rotateY(-1deg); }
 
 @media (max-width: 900px) {
+  .rv-card-wrapper { grid-column: span 6; }
   .rv-card { grid-column: span 6; }
 }
 
 @media (max-width: 600px) {
+  .rv-card-wrapper { grid-column: span 12; }
   .rv-card { grid-column: span 12; }
 }
 

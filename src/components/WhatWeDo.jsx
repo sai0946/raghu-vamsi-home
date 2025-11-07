@@ -1,5 +1,6 @@
 import React from 'react';
 import useRevealOnScroll from '../hooks/useRevealOnScroll';
+import { motion, useAnimation, useInView } from 'framer-motion';
 
 const items = [
   { title: 'Manufacturing and Infrastructure', desc: 'End-to-end facilities with aerospace-grade QA, modern CNC cells, and automated inspection.', img: 'https://img.freepik.com/free-photo/modern-automated-assembly-line-cars-latest-technological-neutral-technologies-production-cars-plant-assembly-shop-modern-cars_645730-531.jpg?semt=ais_hybrid&w=740&q=80' },
@@ -15,6 +16,90 @@ const items = [
   { title: 'Electronic and wire Harenesses', desc: 'Harness manufacturing and testing for aerospace applications.', img: 'https://static.vecteezy.com/system/resources/thumbnails/058/519/026/small/wires-connectors-modules-and-connections-from-a-new-car-wiring-harness-photo.jpg' },
   { title: 'UAV/Drones', desc: 'Components and sub-systems for UAV platforms.', img: 'https://media.istockphoto.com/id/1401444200/photo/drone-white-color-flying-close-up.jpg?s=612x612&w=0&k=20&c=aYgpQHT_0hJUDOsmcd9CYjWNq-hJZYKQALNw6GGFAPo=' }
 ];
+
+function SlideRightWrapper({
+  children,
+  index = 0,
+  totalCards = 0,
+  wrapperClassName = '',
+  className = '',
+  dataParallax,
+  dataAnim,
+  style
+}) {
+  const ref = React.useRef(null);
+  const controls = useAnimation();
+  const hasBeenVisible = React.useRef(false);
+  const inView = useInView(ref, { amount: 0.3, margin: '0px 0px -15% 0px', once: false });
+
+  const baselineOffset = 56; // px to the left of wrapper to feel like it's coming from a line
+  const hiddenX = -(baselineOffset + 240); // fully clipped — card starts to the LEFT
+
+  React.useEffect(() => {
+    controls.set({ x: hiddenX, opacity: 0 });
+  }, [controls, hiddenX]);
+
+  React.useEffect(() => {
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (inView) {
+      // Entering viewport: slide RIGHT from the left (x: hiddenX -> 0)
+      hasBeenVisible.current = true;
+      controls.start({
+        x: 0,
+        opacity: 1,
+        transition: prefersReduced
+          ? { duration: 0 }
+          : {
+              type: 'spring',
+              duration: 0.8,
+              damping: 18,
+              stiffness: 120,
+              delay: index * 0.15
+            }
+      });
+    } else if (hasBeenVisible.current) {
+      // Leaving viewport: slide LEFT back out (x: 0 -> hiddenX), in reverse order
+      const reverseIndex = totalCards - 1 - index;
+      controls.start({
+        x: hiddenX,
+        opacity: 0,
+        transition: prefersReduced
+          ? { duration: 0 }
+          : {
+              type: 'spring',
+              duration: 0.6,
+              damping: 18,
+              stiffness: 120,
+              delay: reverseIndex * 0.1
+            }
+      });
+    }
+  }, [inView, controls, index, totalCards, hiddenX]);
+
+  return (
+    <div
+      ref={ref}
+      className={`rv-card-wrapper relative overflow-hidden ${wrapperClassName}`}
+      style={{ willChange: 'transform' }}
+    >
+      <motion.div
+        className={className}
+        data-parallax={dataParallax}
+        data-anim={dataAnim}
+        style={{ width: '100%', height: '100%', ...(style || {}) }}
+        initial={{ x: hiddenX, opacity: 0 }} // start off-screen to the LEFT
+        animate={controls}
+        whileHover={{ scale: 1.03 }}
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
+}
 
 export default function WhatWeDo() {
   const [ref, shown] = useRevealOnScroll();
@@ -32,22 +117,23 @@ export default function WhatWeDo() {
         </div>
         <div className="rv-card-grid" style={{ marginTop: 28 }}>
           {items.map((it, idx) => (
-            <div
+            <SlideRightWrapper
               key={it.title}
+              index={idx}
+              totalCards={items.length}
+              wrapperClassName=""
               className="rv-card reveal"
-              data-parallax={0.08 + (idx%3)*0.02}
-              data-anim={["up","left","right","tilt"][idx % 4]}
-              style={{ transitionDelay: `${60 + idx*70}ms`, display: 'grid', gap: 12 }}
+              dataParallax={0.08 + (idx % 3) * 0.02}
+              dataAnim={['up', 'left', 'right', 'tilt'][idx % 4]}
+              style={{ display: 'grid', gap: 12 }}
             >
               <div className="rv-thumb" style={{ backgroundImage: `url(${it.img})` }} />
               <div style={{ fontWeight: 700 }}>{it.title}</div>
               <p style={{ marginTop: 4, color: 'var(--rv-text-muted)' }}>{it.desc}</p>
-            </div>
+            </SlideRightWrapper>
           ))}
         </div>
       </div>
     </section>
   );
 }
-
-
